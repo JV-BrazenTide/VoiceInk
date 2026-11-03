@@ -246,7 +246,7 @@ class AIService: ObservableObject {
 
     @Published private var selectedModels: [AIProvider: String] = [:]
     private let userDefaults = UserDefaults.standard
-    let voiceInkRefineService = VoiceInkRefineService.shared
+    let voiceInkRefineService = VoiceInkRefineLibrary.shared
     private lazy var ollamaService = OllamaService()
     private lazy var localCLIService = LocalCLIService()
     private var apiKeyChangeObserver: NSObjectProtocol?

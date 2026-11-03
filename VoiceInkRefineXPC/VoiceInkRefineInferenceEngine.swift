@@ -25,6 +25,17 @@ enum VoiceInkRefineInferenceError: LocalizedError {
     }
 }
 
+#if arch(arm64)
+    // Rillo declares Qwen3_5Tokenizer, which strict loading rejects though it is plain BPE.
+    // Registered classes (V1, Mini, Spokenly) resolve exactly as they do in strict mode.
+    private struct VoiceInkRefineTokenizerLoader: MLXLMCommon.TokenizerLoader {
+        func load(from directory: URL) async throws -> any MLXLMCommon.Tokenizer {
+            let upstream = try await AutoTokenizer.from(modelFolder: directory, strict: false)
+            return #adaptHuggingFaceTokenizer(upstream)
+        }
+    }
+#endif
+
 actor VoiceInkRefineInferenceEngine {
     #if arch(arm64)
         private struct PreparationIdentity: Equatable {
@@ -89,7 +100,8 @@ actor VoiceInkRefineInferenceEngine {
     func enhance(
         transcript: String,
         modelDirectory: URL,
-        systemPrompt: String
+        systemPrompt: String,
+        temperature: Float
     ) async throws -> String {
         #if arch(arm64)
             guard !transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -112,7 +124,8 @@ actor VoiceInkRefineInferenceEngine {
             let session = makeSession(
                 using: modelContainer,
                 systemPrompt: systemPrompt,
-                maximumOutputTokens: maximumOutputTokens
+                maximumOutputTokens: maximumOutputTokens,
+                temperature: temperature
             )
 
             var output = ""
@@ -214,7 +227,7 @@ actor VoiceInkRefineInferenceEngine {
 
             let loadedContainer = try await loadModelContainer(
                 from: modelDirectory,
-                using: #huggingFaceTokenizerLoader()
+                using: VoiceInkRefineTokenizerLoader()
             )
             try Task.checkCancellation()
 
@@ -225,14 +238,16 @@ actor VoiceInkRefineInferenceEngine {
         private func makeSession(
             using container: MLXLMCommon.ModelContainer,
             systemPrompt: String,
-            maximumOutputTokens: Int
+            maximumOutputTokens: Int,
+            temperature: Float = 0.3
         ) -> ChatSession {
             ChatSession(
                 container,
-                instructions: systemPrompt,
+                // A template without a system role would render instructions into the prompt.
+                instructions: systemPrompt.isEmpty ? nil : systemPrompt,
                 generateParameters: GenerateParameters(
                     maxTokens: maximumOutputTokens,
-                    temperature: 0.3
+                    temperature: temperature
                 ),
                 additionalContext: ["enable_thinking": false]
             )

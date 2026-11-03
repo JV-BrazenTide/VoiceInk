@@ -14,6 +14,7 @@ struct VoiceInkRefineEnhanceRequest: Codable, Sendable {
     let modelDirectoryPath: String
     let systemPrompt: String
     let transcript: String
+    let temperature: Float
 }
 
 struct VoiceInkRefineEnhanceResponse: Codable, Sendable {

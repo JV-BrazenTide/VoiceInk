@@ -137,7 +137,8 @@ actor VoiceInkRefineXPCClient {
     func enhance(
         transcript: String,
         modelDirectory: URL,
-        systemPrompt: String
+        systemPrompt: String,
+        temperature: Float
     ) async throws -> String {
         try await acquireCancellableOperation()
         defer { releaseOperation() }
@@ -149,7 +150,8 @@ actor VoiceInkRefineXPCClient {
             requestID: UUID(),
             modelDirectoryPath: modelDirectory.path,
             systemPrompt: systemPrompt,
-            transcript: transcript
+            transcript: transcript,
+            temperature: temperature
         )
         let requestData = try JSONEncoder().encode(request)
         let activeConnection = connectionForRequest()

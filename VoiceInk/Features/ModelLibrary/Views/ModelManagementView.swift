@@ -28,7 +28,6 @@ struct ModelManagementView: View {
     @StateObject private var customModelManager = CustomCloudModelManager.shared
     @StateObject private var customAIProviderManager = CustomAIProviderManager.shared
     @ObservedObject private var warmupCoordinator = WhisperModelWarmupCoordinator.shared
-    private let voiceInkRefineService = VoiceInkRefineService.shared
 
     @State private var selectedFilter: ModelFilter = .local
     @State private var activePanel: ModelManagementPanel?
@@ -242,10 +241,7 @@ struct ModelManagementView: View {
 
     private var localModelsSection: some View {
         VStack(spacing: 12) {
-            VoiceInkRefineModelCardView(
-                service: voiceInkRefineService,
-                deleteAction: deleteVoiceInkRefineModel
-            )
+            VoiceInkRefineModelPickerView(library: .shared)
 
             ForEach(appleSpeechModels, id: \.id) { model in
                 localModelCard(model)
@@ -387,12 +383,6 @@ struct ModelManagementView: View {
             transcriptionModelManager.refreshAllAvailableModels()
         }
         isShowingDeleteAlert = true
-    }
-
-    private func deleteVoiceInkRefineModel() {
-        Task {
-            await voiceInkRefineService.deleteModel()
-        }
     }
 
     private func confirmDeleteCustomEnhancementModel(_ provider: CustomAIProviderConfig) {

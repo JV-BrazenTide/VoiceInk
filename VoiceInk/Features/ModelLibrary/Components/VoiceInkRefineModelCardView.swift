@@ -3,6 +3,8 @@ import SwiftUI
 
 struct VoiceInkRefineModelCardView: View {
     @ObservedObject var service: VoiceInkRefineService
+    let isSelected: Bool
+    let selectAction: () -> Void
     let deleteAction: () -> Void
 
     var body: some View {
@@ -18,12 +20,12 @@ struct VoiceInkRefineModelCardView: View {
             actionSection
         }
         .padding(16)
-        .background(AppMaterialCardBackground())
+        .background(AppMaterialCardBackground(isSelected: isSelected))
     }
 
     private var headerSection: some View {
         HStack(alignment: .firstTextBaseline) {
-            Text(VoiceInkRefineService.modelName)
+            Text(verbatim: service.model.displayName)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(Color(.labelColor))
 
@@ -43,7 +45,7 @@ struct VoiceInkRefineModelCardView: View {
             Label("Enhancement Model", systemImage: "sparkles")
             Label("On-Device", systemImage: "checkmark.shield")
             Label {
-                Text(verbatim: VoiceInkRefineService.downloadSizeDescription)
+                Text(verbatim: service.downloadSizeDescription)
             } icon: {
                 Image(systemName: "internaldrive")
             }
@@ -130,7 +132,14 @@ struct VoiceInkRefineModelCardView: View {
                     }
                     .buttonStyle(.plain)
                 } else if service.isDownloaded {
-                    modelStatusPill("Downloaded", systemImage: "checkmark.circle")
+                    if isSelected {
+                        modelStatusPill("Selected", systemImage: "checkmark.circle.fill")
+                    } else {
+                        Button(action: selectAction) {
+                            modelStatusPill("Select", systemImage: "circle")
+                        }
+                        .buttonStyle(.plain)
+                    }
 
                     Menu {
                         Button(role: .destructive, action: deleteAction) {

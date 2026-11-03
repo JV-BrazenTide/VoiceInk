@@ -82,7 +82,8 @@ final class VoiceInkRefineXPCService: NSObject, VoiceInkRefineXPCProtocol {
                 let output = try await engine.enhance(
                     transcript: request.transcript,
                     modelDirectory: URL(fileURLWithPath: request.modelDirectoryPath),
-                    systemPrompt: request.systemPrompt
+                    systemPrompt: request.systemPrompt,
+                    temperature: request.temperature
                 )
                 let response = VoiceInkRefineEnhanceResponse(
                     requestID: request.requestID,
