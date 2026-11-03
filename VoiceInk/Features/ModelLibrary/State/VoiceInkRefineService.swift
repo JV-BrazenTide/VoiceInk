@@ -92,7 +92,7 @@ final class VoiceInkRefineService: ObservableObject {
             in: .userDomainMask
         )[0]
         modelRootDirectory = appSupportDirectory
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk")
+            .appendingPathComponent(AppIdentity.bundleIdentifier)
             .appendingPathComponent(model.directoryName)
 
         refreshDownloadedState()

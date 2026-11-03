@@ -646,7 +646,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.25;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInk.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocal.dev;
 				PRODUCT_MODULE_NAME = VoiceInk;
 				PRODUCT_NAME = "VoiceInk Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ENABLE_NATIVE_SPEECH_ANALYZER $(inherited)";
@@ -673,7 +673,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VoiceInk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = VoiceInk;
+				INFOPLIST_KEY_CFBundleDisplayName = "VoiceInk Local";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -682,8 +682,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.25;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInk;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocal;
+				PRODUCT_MODULE_NAME = VoiceInk;
+				PRODUCT_NAME = "VoiceInk Local";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "ENABLE_NATIVE_SPEECH_ANALYZER $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -700,7 +701,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInkTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocalTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -718,11 +719,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInkTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocalTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VoiceInk";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk Local.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VoiceInk Local";
 			};
 			name = Release;
 		};
@@ -734,7 +735,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInkUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocalUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -750,7 +751,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInkUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocalUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -778,7 +779,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInk.RefineXPC;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocal.RefineXPC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -807,7 +808,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInk.RefineXPC;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocal.RefineXPC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;

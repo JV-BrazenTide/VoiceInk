@@ -4,7 +4,7 @@ WHISPER_CPP_DIR := $(DEPS_DIR)/whisper.cpp
 FRAMEWORK_PATH := $(WHISPER_CPP_DIR)/build-apple/whisper.xcframework
 LOCAL_DERIVED_DATA := $(CURDIR)/.local-build
 LOCAL_CODESIGN_IDENTITY ?=
-RUN_APP_NAME ?= VoiceInk
+RUN_APP_NAME ?= VoiceInk Local
 
 .PHONY: all clean whisper setup build local check healthcheck help dev run release release-setup
 
@@ -84,21 +84,21 @@ local: check setup
 		-skipPackagePluginValidation \
 		-skipMacroValidation \
 		build
-	@APP_PATH="$(LOCAL_DERIVED_DATA)/Build/Products/Release/VoiceInk.app" && \
+	@APP_PATH="$(LOCAL_DERIVED_DATA)/Build/Products/Release/VoiceInk Local.app" && \
 	if [ -d "$$APP_PATH" ]; then \
-		echo "Copying VoiceInk.app to ~/Downloads..."; \
-		rm -rf "$$HOME/Downloads/VoiceInk.app"; \
-		ditto "$$APP_PATH" "$$HOME/Downloads/VoiceInk.app"; \
-		xattr -cr "$$HOME/Downloads/VoiceInk.app"; \
+		echo "Copying VoiceInk Local.app to ~/Downloads..."; \
+		rm -rf "$$HOME/Downloads/VoiceInk Local.app"; \
+		ditto "$$APP_PATH" "$$HOME/Downloads/VoiceInk Local.app"; \
+		xattr -cr "$$HOME/Downloads/VoiceInk Local.app"; \
 		echo ""; \
-		echo "Build complete! App saved to: ~/Downloads/VoiceInk.app"; \
-		echo "Run with: open ~/Downloads/VoiceInk.app"; \
+		echo "Build complete! App saved to: ~/Downloads/VoiceInk Local.app"; \
+		echo "Run with: open ~/Downloads/VoiceInk\\ Local.app"; \
 		echo ""; \
 		echo "Limitations of local builds:"; \
 		echo "  - No iCloud dictionary sync"; \
 		echo "  - No automatic updates (pull new code and rebuild to update)"; \
 	else \
-		echo "Error: Could not find built VoiceInk.app at $$APP_PATH"; \
+		echo "Error: Could not find built VoiceInk Local.app at $$APP_PATH"; \
 		exit 1; \
 	fi
 

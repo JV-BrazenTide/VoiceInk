@@ -116,7 +116,7 @@ struct VoiceInkApp: App {
 
         // 1. Create modelsDirectory URL
         let appSupportDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk")
+            .appendingPathComponent(AppIdentity.bundleIdentifier)
         let modelsDirectory = appSupportDirectory.appendingPathComponent("WhisperModels")
 
         // 2. Create model managers
@@ -225,7 +225,7 @@ struct VoiceInkApp: App {
 
     private static func createPersistentContainer(schema: Schema, logger: Logger) throws -> ModelContainer {
         let appSupportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk", isDirectory: true)
+            .appendingPathComponent(AppIdentity.bundleIdentifier, isDirectory: true)
 
         try? FileManager.default.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
 
@@ -242,12 +242,12 @@ struct VoiceInkApp: App {
         )
 
         let dictionarySchema = Schema([VocabularyWord.self, WordReplacement.self])
-        // Dev shares the local stores but must never connect to CloudKit.
+        // Dev and local builds must never connect to CloudKit.
         #if DEBUG || LOCAL_BUILD
             let dictionaryCloudKit: ModelConfiguration.CloudKitDatabase = .none
         #else
             let dictionaryCloudKit: ModelConfiguration.CloudKitDatabase = .private(
-                "iCloud.com.prakashjoshipax.VoiceInk")
+                "iCloud.com.jvbrazentide.VoiceInkLocal")
         #endif
         let dictionaryConfig = ModelConfiguration(
             "dictionary",
