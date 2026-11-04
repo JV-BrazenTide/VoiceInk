@@ -4,7 +4,7 @@ import XCTest
 final class VoiceInkRefineCatalogTests: XCTestCase {
     func testEveryModelHasUniqueDirectoryPinnedRevisionAndVerifiableFiles() {
         let models = VoiceInkRefineCatalog.models
-        XCTAssertEqual(models.count, 4)
+        XCTAssertEqual(models.count, 5)
         XCTAssertEqual(Set(models.map(\.id)).count, models.count)
         XCTAssertEqual(Set(models.map(\.directoryName)).count, models.count)
 
@@ -78,5 +78,16 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         XCTAssertEqual(rillo.systemMessage(vocabulary: vocabulary), rillo.systemPrompt + "\n\nWord list:\nKubernetes")
 
         XCTAssertEqual(VoiceInkRefineCatalog.spokenlyCleanup1.systemMessage(vocabulary: vocabulary), "")
+    }
+
+    func testSpokenlyNov4IsPinnedSeparatelyFromTheOriginal() throws {
+        let old = VoiceInkRefineCatalog.spokenlyCleanup1
+        let new = VoiceInkRefineCatalog.spokenlyCleanup1Nov4
+        XCTAssertEqual(new.pinnedRevision, "cd95b5028cefd3a8cee4cefb4cdf159c88676f91")
+        let weights = try XCTUnwrap(new.files.first { $0.path == "model.safetensors" })
+        XCTAssertEqual(weights.size, 1_192_134_935)
+        XCTAssertEqual(weights.sha256, "8821cea26e9c5b213362b5bfea0ccb966630c08e2b69d4e002d3b0e4bc1f8651")
+        XCTAssertNotEqual(new.directoryName, old.directoryName)
+        XCTAssertEqual(old.pinnedRevision, "a83ba762e3c4ab6a3a20814ec68050f381d92cf8")
     }
 }
