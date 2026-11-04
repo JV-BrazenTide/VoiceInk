@@ -41,7 +41,7 @@ enum VoiceInkRefineCatalog {
         }
     }
 
-    static let models = [refineV1, refineMini, rilloCleanup2B, spokenlyCleanup1, spokenlyCleanup1Nov4]
+    static let models = [refineV1, refineMini, rilloCleanup2B, spokenlyCleanup1]
     static var defaultModel: Model { refineV1 }
 
     // Directory and revision are fixed: existing installs live here and must not re-download.
@@ -97,34 +97,10 @@ enum VoiceInkRefineCatalog {
 
     // The card defines a plain "text: …\nout:" prompt and greedy decoding, and its template
     // would render a system message as part of the prompt, so none is sent.
+    // The id and folder keep "nov4" so the existing selection and download stay valid.
     static let spokenlyCleanup1 = Model(
-        id: "spokenly-cleanup-1",
-        displayName: "Spokenly Cleanup 1",
-        repositoryID: "spokenly/cleanup-1",
-        pinnedRevision: "a83ba762e3c4ab6a3a20814ec68050f381d92cf8",
-        directoryName: "VoiceInkRefineSpokenlyCleanup1",
-        systemPrompt: "",
-        transcriptPrefix: "text: ",
-        temperature: 0,
-        vocabularyStyle: .unsupported,
-        files: [
-            .init(path: ".gitattributes", size: 1_689, sha256: "c43a0d1db6927b335944768a334f87bfd14e0999b879393b02290f74cf9fadf5"),
-            .init(path: "LICENSE", size: 11_358, sha256: "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"),
-            .init(path: "NOTICE", size: 504, sha256: "e4b812b85722038ee8e9a5ca8cd4cf361fbf4229f4ee0faf67f69a8c2d512828"),
-            .init(path: "README.md", size: 7_574, sha256: "fa2965679955ab57730fd42078e70b47e8d583889311f3c768e6d5f02d8f5fe8"),
-            .init(path: "chat_template.jinja", size: 186, sha256: "d00ac771aa8c51ef9627472bf895be6ea546e5110e67e4dded3807a46c818320"),
-            .init(path: "config.json", size: 784, sha256: "ed95e4674e2d31732f5c24fc51ae5722556792b9565bb40569b45d305595db7c"),
-            .init(path: "generation_config.json", size: 138, sha256: "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8"),
-            .init(path: "model.safetensors", size: 1_192_134_935, sha256: "dcf73ee83277b6dc4a40e8d9630f4e725f2499ed009be4ae0dd8b35d3ae38400"),
-            .init(path: "model.safetensors.index.json", size: 22_187, sha256: "90681e31419773af1b89d8597c1f4f5153f092fec6e55d09ac268e62462a008e"),
-            .init(path: "tokenizer.json", size: 11_422_650, sha256: "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"),
-            .init(path: "tokenizer_config.json", size: 696, sha256: "5f007d04324afa93876e2a484190e868136c69dfe0e1a29a1063eae583df9d32"),
-        ]
-    )
-
-    static let spokenlyCleanup1Nov4 = Model(
         id: "spokenly-cleanup-1-nov4",
-        displayName: "Spokenly Cleanup 1 (Nov 4)",
+        displayName: "Spokenly Cleanup 1",
         repositoryID: "spokenly/cleanup-1",
         pinnedRevision: "cd95b5028cefd3a8cee4cefb4cdf159c88676f91",
         directoryName: "VoiceInkRefineSpokenlyCleanup1Nov4",
