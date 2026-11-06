@@ -54,6 +54,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
     var isRealtimeTranscriptionEnabled: Bool = true
     var selectedLanguage: String?
     var isTextFormattingEnabled: Bool = false
+    var isSmartPunctuationEnabled: Bool = true
     var useClipboardContext: Bool
     var useSelectedTextContext: Bool
     var useScreenCapture: Bool
@@ -68,7 +69,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id, name, icon, appConfigs, urlConfigs, triggerGroups, triggerWords, isAIEnhancementEnabled,
             selectedPrompt, isRealtimeTranscriptionEnabled, selectedLanguage, isTextFormattingEnabled,
-            useClipboardContext, useSelectedTextContext, useScreenCapture, selectedAIProvider, selectedAIModel,
+            isSmartPunctuationEnabled, useClipboardContext, useSelectedTextContext, useScreenCapture, selectedAIProvider, selectedAIModel,
             outputMode, autoSendKey, isAutoSendEnabled, customCommand, isEnabled, isDefault
         case legacyEmoji = "emoji"
         case selectedWhisperModel
@@ -82,7 +83,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         selectedTranscriptionModelName: String? = nil, isRealtimeTranscriptionEnabled: Bool = true,
         selectedLanguage: String? = nil, useClipboardContext: Bool = false, useSelectedTextContext: Bool = true,
         useScreenCapture: Bool = false,
-        isTextFormattingEnabled: Bool = false, selectedAIProvider: String? = nil, selectedAIModel: String? = nil,
+        isTextFormattingEnabled: Bool = false, isSmartPunctuationEnabled: Bool = true,
+        selectedAIProvider: String? = nil, selectedAIModel: String? = nil,
         outputMode: ModeOutputMode = .paste, autoSendKey: FinishAndSendKey = .none,
         customCommand: ModeCustomCommand? = nil,
         isEnabled: Bool = true, isDefault: Bool = false
@@ -108,6 +110,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         self.isRealtimeTranscriptionEnabled = isRealtimeTranscriptionEnabled
         self.selectedLanguage = selectedLanguage ?? "en"
         self.isTextFormattingEnabled = isTextFormattingEnabled
+        self.isSmartPunctuationEnabled = isSmartPunctuationEnabled
         self.isEnabled = isEnabled
         self.isDefault = isDefault
     }
@@ -147,6 +150,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
             try container.decodeIfPresent(Bool.self, forKey: .isRealtimeTranscriptionEnabled) ?? true
         selectedLanguage = try container.decodeIfPresent(String.self, forKey: .selectedLanguage)
         isTextFormattingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isTextFormattingEnabled) ?? false
+        isSmartPunctuationEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSmartPunctuationEnabled) ?? true
         useClipboardContext =
             try container.decodeIfPresent(Bool.self, forKey: .useClipboardContext)
             ?? UserDefaults.standard.bool(forKey: "useClipboardContext")
@@ -200,6 +204,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         try container.encode(isRealtimeTranscriptionEnabled, forKey: .isRealtimeTranscriptionEnabled)
         try container.encodeIfPresent(selectedLanguage, forKey: .selectedLanguage)
         try container.encode(isTextFormattingEnabled, forKey: .isTextFormattingEnabled)
+        try container.encode(isSmartPunctuationEnabled, forKey: .isSmartPunctuationEnabled)
         try container.encode(useClipboardContext, forKey: .useClipboardContext)
         try container.encode(useSelectedTextContext, forKey: .useSelectedTextContext)
         try container.encode(useScreenCapture, forKey: .useScreenCapture)

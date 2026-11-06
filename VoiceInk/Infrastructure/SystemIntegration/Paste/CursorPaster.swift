@@ -1,6 +1,7 @@
 import AppKit
 import Carbon
 import Foundation
+import SwiftData
 import os
 
 class CursorPaster {
@@ -30,11 +31,17 @@ class CursorPaster {
     @MainActor
     private static var pasteQueueTask: Task<Void, Never>?
     private static let textContextReader = PasteTextContextReader()
+    /// Source of the words Smart Punctuation must not lowercase; set once at launch.
+    @MainActor static var modelContext: ModelContext?
 
+    /// History re-pastes follow the current mode; no mode counts as on.
     static func pasteAtCursor(_ text: String) {
         Task {
             let pasteTask = await MainActor.run {
-                startPasteAtCursor(text)
+                startPasteAtCursor(
+                    text,
+                    smartPunctuation: ModeManager.shared.currentEffectiveConfiguration?.isSmartPunctuationEnabled ?? true
+                )
             }
             _ = await pasteTask.value
         }
@@ -42,12 +49,15 @@ class CursorPaster {
 
     @MainActor
     @discardableResult
-    static func startPasteAtCursor(_ text: String, sendKey: FinishAndSendKey = .none) -> Task<PasteOutcome, Never> {
+    static func startPasteAtCursor(
+        _ text: String, sendKey: FinishAndSendKey = .none, smartPunctuation: Bool
+    ) -> Task<PasteOutcome, Never> {
         let requestedAt = ProcessInfo.processInfo.systemUptime
         let previousPasteTask = pasteQueueTask
         let sessionTask = Task { @MainActor in
             await previousPasteTask?.value
-            return await performPasteSession(text, sendKey: sendKey, requestedAt: requestedAt)
+            return await performPasteSession(
+                text, sendKey: sendKey, smartPunctuation: smartPunctuation, requestedAt: requestedAt)
         }
 
         pasteQueueTask = Task { @MainActor in
@@ -62,7 +72,9 @@ class CursorPaster {
     }
 
     @MainActor
-    private static func performPasteSession(_ text: String, sendKey: FinishAndSendKey, requestedAt: TimeInterval) async -> (
+    private static func performPasteSession(
+        _ text: String, sendKey: FinishAndSendKey, smartPunctuation: Bool, requestedAt: TimeInterval
+    ) async -> (
         outcome: PasteOutcome, clipboardRestoreTask: Task<Void, Never>?
     ) {
         let startedAt = ProcessInfo.processInfo.systemUptime
@@ -71,14 +83,14 @@ class CursorPaster {
         let method = PasteMethod.current()
         let originalText = method.usesClipboard ? text : DirectTextTyper.normalizedText(text)
         var textToDeliver = originalText
-        let smartPunctuation = UserDefaults.standard.bool(forKey: SmartPunctuation.settingsKey)
         let pasteboard: NSPasteboard? = method.usesClipboard ? NSPasteboard.general : nil
         if smartPunctuation {
             // Settle focus before reading, rather than retaining context across the paste delay.
             if method.usesClipboard || method == .remoteTyping { await wait(prePasteDelay) }
             if let processID = NSWorkspace.shared.frontmostApplication?.processIdentifier,
                 let snapshot = await textContextReader.read(processID: processID) {
-                let adjusted = SmartPunctuation.adjusted(originalText, context: snapshot.context)
+                let adjusted = SmartPunctuation.adjusted(
+                    originalText, context: snapshot.context, protectedWords: protectedWords())
                 if adjusted != originalText {
                     let current = await textContextReader.read(processID: processID)
                     if NSWorkspace.shared.frontmostApplication?.processIdentifier == processID,
@@ -154,6 +166,19 @@ class CursorPaster {
             PasteOutcome(result: pasteResult, autoLearnGeneration: autoLearnGeneration),
             clipboardRestoreTask
         )
+    }
+
+    @MainActor
+    private static func protectedWords() -> [String] {
+        guard let modelContext else { return [] }
+        do {
+            let replacements = try modelContext.fetch(FetchDescriptor<WordReplacement>())
+            let vocabulary = try modelContext.fetch(FetchDescriptor<VocabularyWord>())
+            return replacements.filter(\.isEnabled).map(\.replacementText) + vocabulary.map(\.word)
+        } catch {
+            logger.error("Could not load protected words: \(error, privacy: .public)")
+            return []
+        }
     }
 
     private static func snapshotClipboard(from pasteboard: NSPasteboard) -> ClipboardSnapshot {

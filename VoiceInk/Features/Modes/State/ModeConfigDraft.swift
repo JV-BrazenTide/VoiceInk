@@ -14,6 +14,7 @@ struct ModeConfigDraft {
     var isRealtimeTranscriptionEnabled: Bool
     var selectedLanguage: String?
     var isTextFormattingEnabled: Bool
+    var isSmartPunctuationEnabled: Bool
     var useClipboardContext: Bool
     var useSelectedTextContext: Bool
     var useScreenCapture: Bool
@@ -45,6 +46,7 @@ struct ModeConfigDraft {
             isRealtimeTranscriptionEnabled = true
             selectedLanguage = inheritedConfig?.selectedLanguage
             isTextFormattingEnabled = true
+            isSmartPunctuationEnabled = true
             useClipboardContext = false
             useSelectedTextContext = false
             useScreenCapture = true
@@ -72,6 +74,7 @@ struct ModeConfigDraft {
             isRealtimeTranscriptionEnabled = latestConfig.isRealtimeTranscriptionEnabled
             selectedLanguage = latestConfig.selectedLanguage
             isTextFormattingEnabled = latestConfig.isTextFormattingEnabled
+            isSmartPunctuationEnabled = latestConfig.isSmartPunctuationEnabled
             useClipboardContext = latestConfig.useClipboardContext
             useSelectedTextContext = latestConfig.useSelectedTextContext
             useScreenCapture = latestConfig.useScreenCapture
@@ -186,6 +189,7 @@ struct ModeConfigDraft {
                 useSelectedTextContext: useSelectedTextContext,
                 useScreenCapture: useScreenCapture,
                 isTextFormattingEnabled: isTextFormattingEnabled,
+                isSmartPunctuationEnabled: isSmartPunctuationEnabled,
                 selectedAIProvider: selectedAIProvider,
                 selectedAIModel: selectedAIModel,
                 outputMode: outputMode,
@@ -208,6 +212,7 @@ struct ModeConfigDraft {
             updatedConfig.isRealtimeTranscriptionEnabled = isRealtimeTranscriptionEnabled
             updatedConfig.selectedLanguage = selectedLanguage
             updatedConfig.isTextFormattingEnabled = isTextFormattingEnabled
+            updatedConfig.isSmartPunctuationEnabled = isSmartPunctuationEnabled
             updatedConfig.useClipboardContext = useClipboardContext
             updatedConfig.useSelectedTextContext = useSelectedTextContext
             updatedConfig.useScreenCapture = useScreenCapture

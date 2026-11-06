@@ -88,6 +88,7 @@ enum StarterModeFactory {
             useSelectedTextContext: template.useSelectedTextContext,
             useScreenCapture: template.useScreenCapture,
             isTextFormattingEnabled: true,
+            isSmartPunctuationEnabled: true,
             selectedAIProvider: template.usesAIEnhancement ? provider.rawValue : nil,
             selectedAIModel: template.usesAIEnhancement ? (modelName ?? provider.defaultModel) : nil,
             outputMode: template.outputMode,

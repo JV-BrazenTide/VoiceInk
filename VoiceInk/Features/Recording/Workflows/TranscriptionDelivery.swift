@@ -49,7 +49,11 @@ final class TranscriptionDelivery {
 
         if let text = request.text {
             let sendKey = request.sendAfterPaste ? FinishAndSendSettings.selectedKey : request.output.autoSendKey
-            await paste(text, sendKey: sendKey, actions: actions)
+            await paste(
+                text, sendKey: sendKey,
+                smartPunctuation: request.output.mode?.isSmartPunctuationEnabled ?? true,
+                actions: actions
+            )
         } else {
             await actions.dismiss()
         }
@@ -164,7 +168,7 @@ final class TranscriptionDelivery {
         String(format: "%.3f", duration)
     }
 
-    private func paste(_ text: String, sendKey: FinishAndSendKey, actions: Actions) async {
+    private func paste(_ text: String, sendKey: FinishAndSendKey, smartPunctuation: Bool, actions: Actions) async {
         let textToPaste = deliverableText(from: text)
         let appendSpace = UserDefaults.standard.bool(forKey: "AppendTrailingSpace")
         let pastedText = textToPaste + (appendSpace ? " " : "")
@@ -172,7 +176,7 @@ final class TranscriptionDelivery {
         SoundManager.shared.playStopSound()
         await actions.dismiss()
 
-        let pasteTask = CursorPaster.startPasteAtCursor(pastedText, sendKey: sendKey)
+        let pasteTask = CursorPaster.startPasteAtCursor(pastedText, sendKey: sendKey, smartPunctuation: smartPunctuation)
 
         Task { @MainActor in
             let pasteOutcome = await pasteTask.value

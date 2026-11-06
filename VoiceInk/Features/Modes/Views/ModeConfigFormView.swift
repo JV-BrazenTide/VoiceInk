@@ -244,6 +244,15 @@ struct ModeConfigFormView: View {
                         InfoTip("Apply intelligent text formatting to break large block of text into paragraphs.")
                     }
                 }
+
+                if draft.outputMode == .paste {
+                    Toggle(isOn: $draft.isSmartPunctuationEnabled) {
+                        HStack(spacing: 4) {
+                            Text("Smart Punctuation")
+                            InfoTip(LocalizedStringKey("Adjust capitalization, punctuation, and spacing to fit the surrounding text when pasting. If context is unavailable, your text is pasted unchanged."))
+                        }
+                    }
+                }
             }
         }
     }

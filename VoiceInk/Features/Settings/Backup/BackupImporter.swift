@@ -195,9 +195,6 @@ enum BackupImporter {
         if let method = general.pasteMethod.flatMap(PasteMethod.init(rawValue:)) {
             PasteMethod.setCurrent(method)
         }
-        if let enabled = general.smartPunctuationEnabled {
-            UserDefaults.standard.set(enabled, forKey: SmartPunctuation.settingsKey)
-        }
         if let finishAndSendKey = general.finishAndSendKey.flatMap(FinishAndSendKey.init(rawValue:)) {
             UserDefaults.standard.set(finishAndSendKey.rawValue, forKey: FinishAndSendSettings.key)
         }
