@@ -85,7 +85,7 @@ enum SmartPunctuation {
             return first.uppercased() + text.dropFirst()
         }
         guard !startsSentence, first.isUppercase,
-            let previous = left.last, previous.isLetterOrNumber,
+            let previous = left.last, previous.isLetterOrNumber || ",;:".contains(previous),
             !protectedWords.contains(where: { firstToken(of: $0) == token })
         else { return text }
 

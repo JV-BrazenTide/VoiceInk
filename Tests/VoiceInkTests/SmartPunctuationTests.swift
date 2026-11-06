@@ -23,6 +23,12 @@ final class SmartPunctuationTests: XCTestCase {
         XCTAssertEqual(try adjust("I talked to ", "Valarie called me.", "", protectedWords: ["valarie"]), "valarie called me.")
     }
 
+    func testProtectedWordKeepsItsCapitalAfterCommaSemicolonOrColon() throws {
+        for before in ["Hello there, ", "Note: ", "It is done; "] {
+            XCTAssertEqual(try adjust(before, "Valarie called me.", "", protectedWords: ["Valarie"]), "Valarie called me.", before)
+        }
+    }
+
     func testAdjustedResults() throws {
         let cases: [(String, String, String, String)] = [
             ("I talked to ", "Valarie called me.", "", "valarie called me."),
@@ -44,6 +50,16 @@ final class SmartPunctuationTests: XCTestCase {
             ("I said ", "Hello there.", " world", "hello there"),
             ("It is done", "the next one.", "", " the next one."),
             ("foo", "Hello there.", "bar", " Hello there. "),
+            // Capital after a comma, semicolon, or colon
+            ("Hello there, ", "The next one.", "", "the next one."),
+            ("Hello there,", "The next one.", "", " the next one."),
+            ("Note: ", "The next one.", "", "the next one."),
+            ("It is done; ", "The next one.", "", "the next one."),
+            ("Hello there, ", "the next one.", "", "the next one."),
+            ("Hello there, ", "I don't know.", "", "I don't know."),
+            ("Hello there, ", "NASA called.", "", "NASA called."),
+            ("Hello there. ", "The next one.", "", "The next one."),
+            ("Hello there,\n", "The next one.", "", "The next one."),
         ]
         for (before, inserted, after, expected) in cases {
             XCTAssertEqual(try adjust(before, inserted, after), expected, "\(before) | \(inserted) | \(after)")
