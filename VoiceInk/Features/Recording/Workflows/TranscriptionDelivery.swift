@@ -49,8 +49,10 @@ final class TranscriptionDelivery {
 
         if let text = request.text {
             let sendKey = request.sendAfterPaste ? FinishAndSendSettings.selectedKey : request.output.autoSendKey
+            // A Respond mode with no response also lands here; its stored script must not run.
+            let mode = request.output.outputMode == .paste ? request.output.mode : nil
             await paste(
-                text, sendKey: sendKey,
+                text, script: mode?.isPasteScriptEnabled == true ? mode?.pasteScript : nil, sendKey: sendKey,
                 smartPunctuation: request.output.mode?.isSmartPunctuationEnabled ?? true,
                 actions: actions
             )
@@ -168,9 +170,17 @@ final class TranscriptionDelivery {
         String(format: "%.3f", duration)
     }
 
-    private func paste(_ text: String, sendKey: FinishAndSendKey, smartPunctuation: Bool, actions: Actions) async {
-        let textToPaste = deliverableText(from: text)
-        let appendSpace = UserDefaults.standard.bool(forKey: "AppendTrailingSpace")
+    private func paste(
+        _ text: String, script: String?, sendKey: FinishAndSendKey, smartPunctuation: Bool, actions: Actions
+    ) async {
+        var textToPaste = deliverableText(from: text)
+        var appendSpace = UserDefaults.standard.bool(forKey: "AppendTrailingSpace")
+        // Runs while the overlay is still up, so dismissal and paste stay back to back as in a plain Paste.
+        if let script {
+            let result = await runPasteScript(script, input: textToPaste)
+            textToPaste = result.text
+            if result.failure == nil { appendSpace = false }
+        }
         let pastedText = textToPaste + (appendSpace ? " " : "")
         actions.setState(.idle)
         SoundManager.shared.playStopSound()
@@ -189,6 +199,25 @@ final class TranscriptionDelivery {
                 CursorPaster.performSendKey(sendKey)
             }
         }
+    }
+
+    private func runPasteScript(_ script: String, input: String) async -> PasteScriptStep.Result {
+        let startTime = Date()
+        let result = await PasteScriptStep.run(script: script, input: input)
+        let duration = Self.formattedDuration(Date().timeIntervalSince(startTime))
+
+        // Log and show only the fixed reason: stdout and stderr can both contain the dictated text.
+        if let failure = result.failure {
+            logger.notice(
+                "Paste script failed duration=\(duration, privacy: .public)s reason=\(failure, privacy: .public)")
+            NotificationManager.shared.showNotification(
+                title: String(format: String(localized: "Script before paste %@. Pasted the text without it."), failure),
+                type: .error
+            )
+        } else {
+            logger.notice("Paste script succeeded duration=\(duration, privacy: .public)s")
+        }
+        return result
     }
 
     private func deliverableText(from text: String) -> String {

@@ -6,6 +6,7 @@ enum ModeValidationError: Error, Identifiable {
     case missingTranscriptionModel
     case missingEnhancementModel
     case emptyCustomCommand
+    case emptyPasteScript
     case duplicateName(String)
     case duplicateAppTrigger(String, String)  // (app name, existing mode name)
     case duplicateWebsiteTrigger(String, String)  // (website, existing mode name)
@@ -16,6 +17,7 @@ enum ModeValidationError: Error, Identifiable {
         case .missingTranscriptionModel: return "missingTranscriptionModel"
         case .missingEnhancementModel: return "missingEnhancementModel"
         case .emptyCustomCommand: return "emptyCustomCommand"
+        case .emptyPasteScript: return "emptyPasteScript"
         case .duplicateName: return "duplicateName"
         case .duplicateAppTrigger: return "duplicateAppTrigger"
         case .duplicateWebsiteTrigger: return "duplicateWebsiteTrigger"
@@ -32,6 +34,8 @@ enum ModeValidationError: Error, Identifiable {
             return String(localized: "Enter a model ID for AI enhancement.")
         case .emptyCustomCommand:
             return String(localized: "Custom command cannot be empty.")
+        case .emptyPasteScript:
+            return String(localized: "Script before paste is on, but the script is empty. Add a script or turn it off.")
         case .duplicateName(let name):
             return String(
                 format: String(localized: "A mode with the name '%@' already exists."),
@@ -84,6 +88,13 @@ struct ModeValidator {
             config.customCommand?.trimmedCommand == nil
         {
             errors.append(.emptyCustomCommand)
+        }
+
+        // The row is hidden for other outputs, and the step never runs there.
+        if config.outputMode == .paste, config.isPasteScriptEnabled,
+            config.pasteScript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        {
+            errors.append(.emptyPasteScript)
         }
 
         let isDuplicateName = modeManager.configurations.contains { existingConfig in

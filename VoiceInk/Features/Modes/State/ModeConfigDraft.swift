@@ -23,6 +23,8 @@ struct ModeConfigDraft {
     var outputMode: ModeOutputMode
     var autoSendKey: FinishAndSendKey
     var customCommand: String
+    var isPasteScriptEnabled: Bool
+    var pasteScript: String
     var isDefault: Bool
     var isTranscriptionFormattingExpanded: Bool
 
@@ -55,6 +57,8 @@ struct ModeConfigDraft {
             outputMode = .paste
             autoSendKey = .none
             customCommand = inheritedConfig?.customCommand?.command ?? ""
+            isPasteScriptEnabled = false
+            pasteScript = ""
             isDefault = false
             isTranscriptionFormattingExpanded = false
             sourceConfig = nil
@@ -83,6 +87,8 @@ struct ModeConfigDraft {
             outputMode = latestConfig.outputMode
             autoSendKey = latestConfig.autoSendKey
             customCommand = latestConfig.customCommand?.command ?? ""
+            isPasteScriptEnabled = latestConfig.isPasteScriptEnabled
+            pasteScript = latestConfig.pasteScript
             isDefault = latestConfig.isDefault
             isTranscriptionFormattingExpanded = false
             sourceConfig = latestConfig
@@ -195,6 +201,8 @@ struct ModeConfigDraft {
                 outputMode: outputMode,
                 autoSendKey: savedAutoSendKey,
                 customCommand: savedCustomCommand,
+                isPasteScriptEnabled: isPasteScriptEnabled,
+                pasteScript: pasteScript,
                 isDefault: savedIsDefault
             )
 
@@ -221,6 +229,8 @@ struct ModeConfigDraft {
             updatedConfig.outputMode = outputMode
             updatedConfig.autoSendKey = savedAutoSendKey
             updatedConfig.customCommand = savedCustomCommand
+            updatedConfig.isPasteScriptEnabled = isPasteScriptEnabled
+            updatedConfig.pasteScript = pasteScript
             updatedConfig.isDefault = savedIsDefault
             return updatedConfig
         }

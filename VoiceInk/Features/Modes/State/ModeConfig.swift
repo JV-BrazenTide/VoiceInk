@@ -63,6 +63,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
     var outputMode: ModeOutputMode = .paste
     var autoSendKey: FinishAndSendKey = .none
     var customCommand: ModeCustomCommand?
+    var isPasteScriptEnabled: Bool = false
+    var pasteScript: String = ""
     var isEnabled: Bool = true
     var isDefault: Bool = false
 
@@ -70,7 +72,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         case id, name, icon, appConfigs, urlConfigs, triggerGroups, triggerWords, isAIEnhancementEnabled,
             selectedPrompt, isRealtimeTranscriptionEnabled, selectedLanguage, isTextFormattingEnabled,
             isSmartPunctuationEnabled, useClipboardContext, useSelectedTextContext, useScreenCapture, selectedAIProvider, selectedAIModel,
-            outputMode, autoSendKey, isAutoSendEnabled, customCommand, isEnabled, isDefault
+            outputMode, autoSendKey, isAutoSendEnabled, customCommand, isPasteScriptEnabled, pasteScript, isEnabled, isDefault
         case legacyEmoji = "emoji"
         case selectedWhisperModel
         case selectedTranscriptionModelName
@@ -87,6 +89,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         selectedAIProvider: String? = nil, selectedAIModel: String? = nil,
         outputMode: ModeOutputMode = .paste, autoSendKey: FinishAndSendKey = .none,
         customCommand: ModeCustomCommand? = nil,
+        isPasteScriptEnabled: Bool = false, pasteScript: String = "",
         isEnabled: Bool = true, isDefault: Bool = false
     ) {
         self.id = id
@@ -104,6 +107,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         self.outputMode = outputMode
         self.autoSendKey = autoSendKey
         self.customCommand = customCommand
+        self.isPasteScriptEnabled = isPasteScriptEnabled
+        self.pasteScript = pasteScript
         self.selectedAIProvider = selectedAIProvider
         self.selectedAIModel = selectedAIModel
         self.selectedTranscriptionModelName = selectedTranscriptionModelName
@@ -168,6 +173,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         selectedAIModel = try container.decodeIfPresent(String.self, forKey: .selectedAIModel)
         outputMode = try container.decodeIfPresent(ModeOutputMode.self, forKey: .outputMode) ?? .paste
         customCommand = try container.decodeIfPresent(ModeCustomCommand.self, forKey: .customCommand)
+        isPasteScriptEnabled = try container.decodeIfPresent(Bool.self, forKey: .isPasteScriptEnabled) ?? false
+        pasteScript = try container.decodeIfPresent(String.self, forKey: .pasteScript) ?? ""
         // Keep compatibility with saved modes from before Auto Send became global.
         if let rawValue = try container.decodeIfPresent(String.self, forKey: .autoSendKey),
             let key = FinishAndSendKey(rawValue: rawValue)
@@ -213,6 +220,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         try container.encode(outputMode, forKey: .outputMode)
         try container.encode(autoSendKey, forKey: .autoSendKey)
         try container.encodeIfPresent(customCommand, forKey: .customCommand)
+        try container.encode(isPasteScriptEnabled, forKey: .isPasteScriptEnabled)
+        try container.encode(pasteScript, forKey: .pasteScript)
         try container.encodeIfPresent(selectedTranscriptionModelName, forKey: .selectedTranscriptionModelName)
         try container.encode(isEnabled, forKey: .isEnabled)
         try container.encode(isDefault, forKey: .isDefault)

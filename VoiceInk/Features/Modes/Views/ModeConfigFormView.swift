@@ -624,6 +624,10 @@ struct ModeConfigFormView: View {
                 applyOutputRules()
             }
 
+            if draft.outputMode == .paste {
+                PasteScriptControls(isEnabled: $draft.isPasteScriptEnabled, script: $draft.pasteScript)
+            }
+
             if draft.outputMode != .respond {
                 Toggle(isOn: $draft.isDefault) {
                     HStack(spacing: 6) {
