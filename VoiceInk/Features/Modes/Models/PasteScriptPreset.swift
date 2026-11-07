@@ -1,23 +1,23 @@
 import Foundation
 
 enum PasteScriptPreset: String, CaseIterable, Identifiable {
-    case addTerminalPeriod
-    case removeTerminalPeriod
+    case addTrailingPeriod
+    case removeTrailingPeriod
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .addTerminalPeriod:
-            return String(localized: "Add Terminal Period")
-        case .removeTerminalPeriod:
-            return String(localized: "Remove Terminal Period")
+        case .addTrailingPeriod:
+            return String(localized: "Add Trailing Period")
+        case .removeTrailingPeriod:
+            return String(localized: "Remove Trailing Period")
         }
     }
 
     var script: String {
         switch self {
-        case .addTerminalPeriod:
+        case .addTrailingPeriod:
             return #"""
                 perl -0777 -CSD -Mutf8 -pe 's/\h*(?:\.{3}|…)\h+([A-Z])/ \L$1/g;
                 s/\h*(?:\.{3}|…)\h+/ /g;
@@ -26,7 +26,7 @@ enum PasteScriptPreset: String, CaseIterable, Identifiable {
                 s/[—–-]+\s*$//;
                 s/\s+$//; $_ .= "." unless /[.!?]["\x27”’]?$/; $_ .= " ";'
                 """#
-        case .removeTerminalPeriod:
+        case .removeTrailingPeriod:
             return #"""
                 perl -0777 -CSD -Mutf8 -pe 's/\h*(?:\.{3}|…)\h+([A-Z])/ \L$1/g;
                 s/\h*(?:\.{3}|…)\h+/ /g;

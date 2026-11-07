@@ -25,9 +25,9 @@ final class PasteScriptTests: XCTestCase {
             ("Renée wrote café…", "Renée wrote café. ", "Renée wrote café"),
         ]
         for item in cases {
-            let added = try await runPreset(.addTerminalPeriod, item.input)
+            let added = try await runPreset(.addTrailingPeriod, item.input)
             XCTAssertEqual(added, item.add, "add: \(item.input)")
-            let removed = try await runPreset(.removeTerminalPeriod, item.input)
+            let removed = try await runPreset(.removeTrailingPeriod, item.input)
             XCTAssertEqual(removed, item.remove, "remove: \(item.input)")
         }
     }
@@ -124,7 +124,7 @@ final class PasteScriptTests: XCTestCase {
     }
 
     func testScriptSurvivesEncodeAndDecode() throws {
-        let script = PasteScriptPreset.addTerminalPeriod.script
+        let script = PasteScriptPreset.addTrailingPeriod.script
         let mode = ModeConfig(name: "On", isAIEnhancementEnabled: false, isPasteScriptEnabled: true, pasteScript: script)
         let decoded = try JSONDecoder().decode(ModeConfig.self, from: JSONEncoder().encode(mode))
         XCTAssertTrue(decoded.isPasteScriptEnabled)
