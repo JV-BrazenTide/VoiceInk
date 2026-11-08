@@ -97,7 +97,7 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         XCTAssertEqual(s1.displayName, "S1-mini")
         XCTAssertEqual(s1.repositoryID, "rillotalk/S1-mini-mlx")
         XCTAssertEqual(s1.directoryName, "VoiceInkRefineS1Mini")
-        XCTAssertEqual(s1.transcriptPrefix, "")
+        XCTAssertEqual(s1.transcriptPrefix, "[Styling: semi-formal] [Structure: lists] [Context: general]\n")
         XCTAssertEqual(s1.temperature, 0)
         XCTAssertFalse(s1.files.isEmpty)
 

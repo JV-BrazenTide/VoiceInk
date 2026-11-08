@@ -123,8 +123,8 @@ enum VoiceInkRefineCatalog {
         ]
     )
 
-    // Rillo's MLX build of superwhisper/s1-mini. The card requires its exact system prompt and
-    // greedy decoding; extra system text is untrained. Its control line is deliberately not sent.
+    // Rillo's MLX build of superwhisper/s1-mini. The card requires its exact system prompt, a
+    // control line before the transcript, and greedy decoding; extra system text is untrained.
     static let s1Mini = Model(
         id: "superwhisper-s1-mini",
         displayName: "S1-mini",
@@ -132,6 +132,7 @@ enum VoiceInkRefineCatalog {
         pinnedRevision: "70dfc7da157101f4e43de68e2a07471e13b0e3b1",
         directoryName: "VoiceInkRefineS1Mini",
         systemPrompt: "You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text.",
+        transcriptPrefix: "[Styling: semi-formal] [Structure: lists] [Context: general]\n",
         temperature: 0,
         vocabularyStyle: .unsupported,
         files: [
