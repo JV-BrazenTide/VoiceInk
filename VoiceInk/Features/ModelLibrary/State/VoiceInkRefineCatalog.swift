@@ -41,7 +41,7 @@ enum VoiceInkRefineCatalog {
         }
     }
 
-    static let models = [refineV1, refineMini, rilloCleanup2B, spokenlyCleanup1]
+    static let models = [refineV1, refineMini, rilloCleanup2B, spokenlyCleanup1, s1Mini, veduScribe08B]
     static var defaultModel: Model { refineV1 }
 
     // Directory and revision are fixed: existing installs live here and must not re-download.
@@ -120,6 +120,54 @@ enum VoiceInkRefineCatalog {
             .init(path: "model.safetensors.index.json", size: 22_187, sha256: "90681e31419773af1b89d8597c1f4f5153f092fec6e55d09ac268e62462a008e"),
             .init(path: "tokenizer.json", size: 11_422_650, sha256: "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"),
             .init(path: "tokenizer_config.json", size: 696, sha256: "5f007d04324afa93876e2a484190e868136c69dfe0e1a29a1063eae583df9d32"),
+        ]
+    )
+
+    // Rillo's MLX build of superwhisper/s1-mini. The card requires its exact system prompt and
+    // greedy decoding; extra system text is untrained. Its control line is deliberately not sent.
+    static let s1Mini = Model(
+        id: "superwhisper-s1-mini",
+        displayName: "S1-mini",
+        repositoryID: "rillotalk/S1-mini-mlx",
+        pinnedRevision: "70dfc7da157101f4e43de68e2a07471e13b0e3b1",
+        directoryName: "VoiceInkRefineS1Mini",
+        systemPrompt: "You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text.",
+        temperature: 0,
+        vocabularyStyle: .unsupported,
+        files: [
+            .init(path: ".gitattributes", size: 1_519, sha256: "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"),
+            .init(path: "LICENSE", size: 12_033, sha256: "f715982df6ce767ae64864d74b95644e5d658aab54717dbceeb252eb3cbcb421"),
+            .init(path: "NOTICE", size: 470, sha256: "4feae786f1766dc58e807bcae1e7bdd06bf3610a03a23d0621b6c6c4d05f2980"),
+            .init(path: "README.md", size: 986, sha256: "aa5da9398453694a34a9dd56ac23e32f00e031041b8e87ee36aa787eed741aa5"),
+            .init(path: "chat_template.jinja", size: 4_168, sha256: "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8"),
+            .init(path: "config.json", size: 917, sha256: "8ff1e29a68d17766c3e9c859c2a4c774a03a5d075a4964f89117b38c2e208e0e"),
+            .init(path: "generation_config.json", size: 156, sha256: "4156c81cdbe9134ac80a8723b3a3d316bc217e35b17522dfbe2f7f67f2c2915b"),
+            .init(path: "model.safetensors", size: 439_825_323, sha256: "8093298f7a990023fe7cc9cd89f08cab7725a60e21a652edc51b02351b403ee8"),
+            .init(path: "tokenizer.json", size: 3_459_982, sha256: "c6aa28b573de6b04c6acb5ebbd2073b3564e21859aa65f96b24469b3674e6979"),
+            .init(path: "tokenizer_config.json", size: 728, sha256: "b001d07c42c37b2844dc8867fcf8b0ecf7cddfe529e74dc593ea234a33c538a4"),
+        ]
+    )
+
+    // heyvedu/vedu-scribe-0.8b. The card fixes the system message and greedy decoding; its
+    // optional vocab header belongs in the user message, which this catalog cannot build yet.
+    static let veduScribe08B = Model(
+        id: "vedu-scribe-0.8b",
+        displayName: "Vedu Scribe 0.8B",
+        repositoryID: "heyvedu/vedu-scribe-0.8b",
+        pinnedRevision: "7dced5841c58d7d6e0118c4c123f222b35057871",
+        directoryName: "VoiceInkRefineVeduScribe08B",
+        systemPrompt: "Clean up this dictation.",
+        temperature: 0,
+        vocabularyStyle: .unsupported,
+        files: [
+            .init(path: ".gitattributes", size: 1_570, sha256: "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"),
+            .init(path: "README.md", size: 8_468, sha256: "fa62832ec09ebbd9b8807abd1abea4c51211c2555de0f318d39ba8af8308bb90"),
+            .init(path: "chat_template.jinja", size: 7_755, sha256: "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80"),
+            .init(path: "config.json", size: 60_445, sha256: "a02e0e16a518b5a3baa307941b90f2b19f4730aa775c2babd3993d39de770654"),
+            .init(path: "model.safetensors", size: 540_713_766, sha256: "9912660269b0a57dec85a368fa37b23ed7e76ca438b05b9b2238b4b887e7d2e6"),
+            .init(path: "model.safetensors.index.json", size: 60_784, sha256: "437540ae055104cac70097c3b8706d5c46fd821f438b0fa06adddbed3683455f"),
+            .init(path: "tokenizer.json", size: 19_989_339, sha256: "a5cd9732badce41de57e6efce8302930ded1c1188c5f81feb2bd6c24c4a1941f"),
+            .init(path: "tokenizer_config.json", size: 1_502, sha256: "4d2fc7899270dc76b57a7aa1d5ec3234e6a25934c6e2aea6166f989f1d453892"),
         ]
     )
 }

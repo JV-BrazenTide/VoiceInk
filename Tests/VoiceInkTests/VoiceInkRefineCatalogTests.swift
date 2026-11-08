@@ -4,7 +4,7 @@ import XCTest
 final class VoiceInkRefineCatalogTests: XCTestCase {
     func testEveryModelHasUniqueDirectoryPinnedRevisionAndVerifiableFiles() {
         let models = VoiceInkRefineCatalog.models
-        XCTAssertEqual(models.count, 4)
+        XCTAssertEqual(models.count, 6)
         XCTAssertEqual(Set(models.map(\.id)).count, models.count)
         XCTAssertEqual(Set(models.map(\.directoryName)).count, models.count)
 
@@ -89,5 +89,30 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         let weights = try XCTUnwrap(spokenly.files.first { $0.path == "model.safetensors" })
         XCTAssertEqual(weights.size, 1_192_134_935)
         XCTAssertEqual(weights.sha256, "8821cea26e9c5b213362b5bfea0ccb966630c08e2b69d4e002d3b0e4bc1f8651")
+    }
+
+    func testS1MiniAndVeduScribeEntries() {
+        let s1 = VoiceInkRefineCatalog.s1Mini
+        XCTAssertEqual(s1.id, "superwhisper-s1-mini")
+        XCTAssertEqual(s1.displayName, "S1-mini")
+        XCTAssertEqual(s1.repositoryID, "rillotalk/S1-mini-mlx")
+        XCTAssertEqual(s1.directoryName, "VoiceInkRefineS1Mini")
+        XCTAssertEqual(s1.transcriptPrefix, "")
+        XCTAssertEqual(s1.temperature, 0)
+        XCTAssertFalse(s1.files.isEmpty)
+
+        let vedu = VoiceInkRefineCatalog.veduScribe08B
+        XCTAssertEqual(vedu.id, "vedu-scribe-0.8b")
+        XCTAssertEqual(vedu.displayName, "Vedu Scribe 0.8B")
+        XCTAssertEqual(vedu.repositoryID, "heyvedu/vedu-scribe-0.8b")
+        XCTAssertEqual(vedu.directoryName, "VoiceInkRefineVeduScribe08B")
+        XCTAssertEqual(vedu.temperature, 0)
+        XCTAssertFalse(vedu.files.isEmpty)
+
+        // Both cards say extra system text is untrained, so vocabulary must not be appended.
+        let vocabulary = RecordingVocabulary(savedTerms: ["Kubernetes"])
+        XCTAssertEqual(s1.systemMessage(vocabulary: vocabulary), s1.systemPrompt)
+        XCTAssertEqual(vedu.systemMessage(vocabulary: vocabulary), "Clean up this dictation.")
+        XCTAssertEqual(VoiceInkRefineCatalog.models.suffix(2).map(\.id), [s1.id, vedu.id])
     }
 }
