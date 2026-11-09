@@ -4,7 +4,7 @@ import XCTest
 final class VoiceInkRefineCatalogTests: XCTestCase {
     func testEveryModelHasUniqueDirectoryPinnedRevisionAndVerifiableFiles() {
         let models = VoiceInkRefineCatalog.models
-        XCTAssertEqual(models.count, 6)
+        XCTAssertEqual(models.count, 5)
         XCTAssertEqual(Set(models.map(\.id)).count, models.count)
         XCTAssertEqual(Set(models.map(\.directoryName)).count, models.count)
 
@@ -60,8 +60,8 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         defaults.set(VoiceInkRefineCatalog.rilloCleanup2B.id, forKey: VoiceInkRefineLibrary.selectionDefaultsKey)
         XCTAssertEqual(VoiceInkRefineLibrary.selectedModel(in: defaults).id, VoiceInkRefineCatalog.rilloCleanup2B.id)
 
-        // Includes the ids of the removed Refine Mini and Vedu Scribe entries.
-        for removedID in ["removed-model", "voiceink-refine-mini", "vedu-scribe-0.8b"] {
+        // Includes the ids of the removed Refine Mini, Vedu Scribe and Muesli entries.
+        for removedID in ["removed-model", "voiceink-refine-mini", "vedu-scribe-0.8b", "muesli-cleanup-2b-v14"] {
             defaults.set(removedID, forKey: VoiceInkRefineLibrary.selectionDefaultsKey)
             XCTAssertEqual(VoiceInkRefineLibrary.selectedModel(in: defaults).id, VoiceInkRefineCatalog.refineV1.id)
         }
@@ -126,21 +126,6 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         }
         XCTAssertEqual(catalog.refineV1.userMessage(transcript: "um hello", vocabulary: vocabulary), "um hello")
         XCTAssertEqual(catalog.spokenlyCleanup1.userMessage(transcript: "um hello", vocabulary: vocabulary), "text: um hello")
-    }
-
-    func testMuesliSendsItsInstructionAsTheUserTurn() {
-        let muesli = VoiceInkRefineCatalog.muesliCleanup2B
-        XCTAssertEqual(muesli.id, "muesli-cleanup-2b-v14")
-        XCTAssertEqual(muesli.repositoryID, "Muesli-HQ/qwen35-2b-muesli-cleanup-v14-mlx-8bit")
-        XCTAssertEqual(muesli.pinnedRevision, "d627bb292c62c89a1e28bb25788e97f094c01064")
-        XCTAssertEqual(muesli.temperature, 0)
-
-        let vocabulary = RecordingVocabulary(savedTerms: ["Kubernetes"])
-        XCTAssertEqual(muesli.systemMessage(vocabulary: vocabulary), "")
-        let message = muesli.userMessage(transcript: "um hello", vocabulary: vocabulary)
-        XCTAssertTrue(message.hasPrefix("Clean up speech-to-text transcription. Only make changes when there is a clear error."))
-        XCTAssertTrue(message.hasSuffix("Preserve the speaker's original phrasing.\n\num hello"))
-        XCTAssertFalse(message.contains("Kubernetes"))
     }
 
     func testSuperPutsVocabularyInTheDictionarySection() {
