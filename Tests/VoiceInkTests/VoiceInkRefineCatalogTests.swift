@@ -51,8 +51,10 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
     }
 
     func testSelectionDefaultsToRefineV1AndPersists() throws {
-        let suite = "VoiceInkRefineCatalogTests.\(UUID().uuidString)"
+        // Fixed name: cfprefsd leaves an empty plist per suite name, so random names pile up.
+        let suite = "VoiceInkRefineCatalogTests.selection"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defaults.removePersistentDomain(forName: suite)
         defer { defaults.removePersistentDomain(forName: suite) }
 
         XCTAssertEqual(VoiceInkRefineLibrary.selectedModel(in: defaults).id, VoiceInkRefineCatalog.refineV1.id)
