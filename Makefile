@@ -50,10 +50,15 @@ build: setup
 		-skipMacroValidation \
 		build
 
+# Delete $(1), retrying because Finder can write .DS_Store mid-delete.
+define rm_retry
+for i in 1 2 3; do rm -rf "$(1)" 2>/dev/null; [ ! -e "$(1)" ] && break; [ $$i -lt 3 ] && sleep 1; done; if [ -e "$(1)" ]; then echo "Could not delete $(1) after 3 attempts"; exit 1; fi
+endef
+
 # Build locally with stable Apple Development signing when available.
 local: check setup
 	@echo "Building VoiceInk for local use (no Apple Developer certificate required)..."
-	@rm -rf "$(LOCAL_DERIVED_DATA)"
+	@$(call rm_retry,$(LOCAL_DERIVED_DATA))
 	@SIGNING_IDENTITY="$(LOCAL_CODESIGN_IDENTITY)"; \
 	if [ -z "$$SIGNING_IDENTITY" ]; then \
 		SIGNING_IDENTITIES=$$(security find-identity -v -p codesigning 2>/dev/null | awk '/"Apple Development: / { print $$2 }'); \
@@ -87,7 +92,7 @@ local: check setup
 	@APP_PATH="$(LOCAL_DERIVED_DATA)/Build/Products/Release/VoiceInk Local.app" && \
 	if [ -d "$$APP_PATH" ]; then \
 		echo "Copying VoiceInk Local.app to ~/Downloads..."; \
-		rm -rf "$$HOME/Downloads/VoiceInk Local.app"; \
+		$(call rm_retry,$$HOME/Downloads/VoiceInk Local.app); \
 		ditto "$$APP_PATH" "$$HOME/Downloads/VoiceInk Local.app"; \
 		xattr -cr "$$HOME/Downloads/VoiceInk Local.app"; \
 		echo ""; \
