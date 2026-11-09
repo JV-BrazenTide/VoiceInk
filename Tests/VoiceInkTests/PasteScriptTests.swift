@@ -23,6 +23,25 @@ final class PasteScriptTests: XCTestCase {
             ("He said \"go.\"", "He said \"go.\" ", "He said \"go.\""),
             ("Is it?", "Is it? ", "Is it?"),
             ("Renée wrote café…", "Renée wrote café. ", "Renée wrote café"),
+            (
+                "As far as the other cards:\n- Move the AI brown bag to tomorrow.\n- Keep the Sumner card.",
+                "As far as the other cards:\n- Move the AI brown bag to tomorrow.\n- Keep the Sumner card. ",
+                "As far as the other cards:\n- Move the AI brown bag to tomorrow.\n- Keep the Sumner card"
+            ),
+            (
+                "Cards:\n– Move it.\n— Keep it.",
+                "Cards:\n– Move it.\n— Keep it. ",
+                "Cards:\n– Move it.\n— Keep it"
+            ),
+            ("First line.\n... Then go", "First line.\n... Then go. ", "First line.\n... Then go"),
+            ("First line.\n… Then go", "First line.\n… Then go. ", "First line.\n… Then go"),
+            ("I went there — Then left", "I went there then left. ", "I went there then left"),
+            ("I went there... Then left", "I went there then left. ", "I went there then left"),
+            (
+                "Items:\n- Top item.\n  - Nested item.",
+                "Items:\n- Top item.\n  - Nested item. ",
+                "Items:\n- Top item.\n  - Nested item"
+            ),
         ]
         for item in cases {
             let added = try await runPreset(.addTrailingPeriod, item.input)

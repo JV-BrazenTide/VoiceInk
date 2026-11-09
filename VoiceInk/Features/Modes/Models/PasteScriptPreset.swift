@@ -19,19 +19,19 @@ enum PasteScriptPreset: String, CaseIterable, Identifiable {
         switch self {
         case .addTrailingPeriod:
             return #"""
-                perl -0777 -CSD -Mutf8 -pe 's/\h*(?:\.{3}|…)\h+([A-Z])/ \L$1/g;
-                s/\h*(?:\.{3}|…)\h+/ /g;
+                perl -0777 -CSD -Mutf8 -pe 's/(?<=\S)\h*(?:\.{3}|…)\h+([A-Z])/ \L$1/g;
+                s/(?<=\S)\h*(?:\.{3}|…)\h+/ /g;
                 s/\s*(?:\.{3}|…)\s*$//;
-                s/\h*[—–-]+\h+([A-Z])/ \L$1/g;
+                s/(?<=\S)\h*[—–-]+\h+([A-Z])/ \L$1/g;
                 s/[—–-]+\s*$//;
                 s/\s+$//; $_ .= "." unless /[.!?]["\x27”’]?$/; $_ .= " ";'
                 """#
         case .removeTrailingPeriod:
             return #"""
-                perl -0777 -CSD -Mutf8 -pe 's/\h*(?:\.{3}|…)\h+([A-Z])/ \L$1/g;
-                s/\h*(?:\.{3}|…)\h+/ /g;
+                perl -0777 -CSD -Mutf8 -pe 's/(?<=\S)\h*(?:\.{3}|…)\h+([A-Z])/ \L$1/g;
+                s/(?<=\S)\h*(?:\.{3}|…)\h+/ /g;
                 s/\s*(?:\.{3}|…)\s*$//;
-                s/\h*[—–-]+\h+([A-Z])/ \L$1/g;
+                s/(?<=\S)\h*[—–-]+\h+([A-Z])/ \L$1/g;
                 s/[—–-]+\s*$//;
                 s/\s+$//; s/\.$//;'
                 """#
