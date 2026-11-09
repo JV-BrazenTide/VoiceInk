@@ -144,7 +144,7 @@ final class VoiceInkRefineService: ObservableObject {
         }
 
         return try await inferenceClient.enhance(
-            transcript: model.transcriptPrefix + transcript,
+            transcript: model.userMessage(transcript: transcript, vocabulary: vocabulary),
             modelDirectory: snapshotURL,
             systemPrompt: model.systemMessage(vocabulary: vocabulary),
             temperature: model.temperature

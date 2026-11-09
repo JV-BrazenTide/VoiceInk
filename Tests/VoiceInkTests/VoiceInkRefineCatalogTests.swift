@@ -60,8 +60,11 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         defaults.set(VoiceInkRefineCatalog.rilloCleanup2B.id, forKey: VoiceInkRefineLibrary.selectionDefaultsKey)
         XCTAssertEqual(VoiceInkRefineLibrary.selectedModel(in: defaults).id, VoiceInkRefineCatalog.rilloCleanup2B.id)
 
-        defaults.set("removed-model", forKey: VoiceInkRefineLibrary.selectionDefaultsKey)
-        XCTAssertEqual(VoiceInkRefineLibrary.selectedModel(in: defaults).id, VoiceInkRefineCatalog.refineV1.id)
+        // Includes the ids of the removed Refine Mini and Vedu Scribe entries.
+        for removedID in ["removed-model", "voiceink-refine-mini", "vedu-scribe-0.8b"] {
+            defaults.set(removedID, forKey: VoiceInkRefineLibrary.selectionDefaultsKey)
+            XCTAssertEqual(VoiceInkRefineLibrary.selectedModel(in: defaults).id, VoiceInkRefineCatalog.refineV1.id)
+        }
     }
 
     func testSystemMessageFollowsEachModelsVocabularyFormat() {
@@ -91,7 +94,7 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         XCTAssertEqual(weights.sha256, "8821cea26e9c5b213362b5bfea0ccb966630c08e2b69d4e002d3b0e4bc1f8651")
     }
 
-    func testS1MiniAndVeduScribeEntries() {
+    func testS1MiniEntry() {
         let s1 = VoiceInkRefineCatalog.s1Mini
         XCTAssertEqual(s1.id, "superwhisper-s1-mini")
         XCTAssertEqual(s1.displayName, "S1-mini")
@@ -101,18 +104,62 @@ final class VoiceInkRefineCatalogTests: XCTestCase {
         XCTAssertEqual(s1.temperature, 0)
         XCTAssertFalse(s1.files.isEmpty)
 
-        let vedu = VoiceInkRefineCatalog.veduScribe08B
-        XCTAssertEqual(vedu.id, "vedu-scribe-0.8b")
-        XCTAssertEqual(vedu.displayName, "Vedu Scribe 0.8B")
-        XCTAssertEqual(vedu.repositoryID, "heyvedu/vedu-scribe-0.8b")
-        XCTAssertEqual(vedu.directoryName, "VoiceInkRefineVeduScribe08B")
-        XCTAssertEqual(vedu.temperature, 0)
-        XCTAssertFalse(vedu.files.isEmpty)
-
-        // Both cards say extra system text is untrained, so vocabulary must not be appended.
+        // The card says extra system text is untrained, so vocabulary must not be appended.
         let vocabulary = RecordingVocabulary(savedTerms: ["Kubernetes"])
         XCTAssertEqual(s1.systemMessage(vocabulary: vocabulary), s1.systemPrompt)
-        XCTAssertEqual(vedu.systemMessage(vocabulary: vocabulary), "Clean up this dictation.")
-        XCTAssertEqual(VoiceInkRefineCatalog.models.suffix(2).map(\.id), [s1.id, vedu.id])
+    }
+
+    func testRilloUsesGreedyDecoding() {
+        XCTAssertEqual(VoiceInkRefineCatalog.rilloCleanup2B.temperature, 0)
+    }
+
+    func testExistingEntriesSendPrefixPlusTranscript() {
+        let vocabulary = RecordingVocabulary(savedTerms: ["Kubernetes"])
+        let catalog = VoiceInkRefineCatalog.self
+        for model in [catalog.refineV1, catalog.rilloCleanup2B, catalog.spokenlyCleanup1, catalog.s1Mini] {
+            XCTAssertNil(model.userMessageBuilder, model.displayName)
+            XCTAssertEqual(
+                model.userMessage(transcript: "um hello", vocabulary: vocabulary),
+                model.transcriptPrefix + "um hello",
+                model.displayName
+            )
+        }
+        XCTAssertEqual(catalog.refineV1.userMessage(transcript: "um hello", vocabulary: vocabulary), "um hello")
+        XCTAssertEqual(catalog.spokenlyCleanup1.userMessage(transcript: "um hello", vocabulary: vocabulary), "text: um hello")
+    }
+
+    func testMuesliSendsItsInstructionAsTheUserTurn() {
+        let muesli = VoiceInkRefineCatalog.muesliCleanup2B
+        XCTAssertEqual(muesli.id, "muesli-cleanup-2b-v14")
+        XCTAssertEqual(muesli.repositoryID, "Muesli-HQ/qwen35-2b-muesli-cleanup-v14-mlx-8bit")
+        XCTAssertEqual(muesli.pinnedRevision, "d627bb292c62c89a1e28bb25788e97f094c01064")
+        XCTAssertEqual(muesli.temperature, 0)
+
+        let vocabulary = RecordingVocabulary(savedTerms: ["Kubernetes"])
+        XCTAssertEqual(muesli.systemMessage(vocabulary: vocabulary), "")
+        let message = muesli.userMessage(transcript: "um hello", vocabulary: vocabulary)
+        XCTAssertTrue(message.hasPrefix("Clean up speech-to-text transcription. Only make changes when there is a clear error."))
+        XCTAssertTrue(message.hasSuffix("Preserve the speaker's original phrasing.\n\num hello"))
+        XCTAssertFalse(message.contains("Kubernetes"))
+    }
+
+    func testSuperPutsVocabularyInTheDictionarySection() {
+        let superCleanup = VoiceInkRefineCatalog.superCleanup2B
+        XCTAssertEqual(superCleanup.id, "super-cleanup-2b-v7")
+        XCTAssertEqual(superCleanup.repositoryID, "Kayetic/super-cleanup-qwen3.5-2b")
+        XCTAssertEqual(superCleanup.pinnedRevision, "5d5f45f3d5769ecffee8c6781079fee228f3fbe7")
+        XCTAssertEqual(superCleanup.temperature, 0)
+
+        let vocabulary = RecordingVocabulary(savedTerms: ["Groq", "Vite", "qBittorrent"])
+        XCTAssertEqual(superCleanup.systemMessage(vocabulary: vocabulary), superCleanup.systemPrompt)
+        XCTAssertTrue(superCleanup.systemPrompt.hasSuffix("Output only the cleaned text."))
+        XCTAssertEqual(
+            superCleanup.userMessage(transcript: "um hello", vocabulary: vocabulary),
+            "App: (none)\nWindow: (none)\nDictionary: Groq, Vite, qBittorrent\nScreen:\n(none)\n\nRecent:\n(none)\n\nField:\n(none)\n\nTranscript:\num hello"
+        )
+        XCTAssertTrue(
+            superCleanup.userMessage(transcript: "x", vocabulary: RecordingVocabulary())
+                .hasPrefix("App: (none)\nWindow: (none)\nDictionary: (none)\nScreen:")
+        )
     }
 }
