@@ -673,7 +673,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VoiceInk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "VoiceInk Local";
+				INFOPLIST_KEY_CFBundleDisplayName = VoiceInk;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -684,7 +684,7 @@
 				MARKETING_VERSION = 2.26;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jvbrazentide.VoiceInkLocal;
 				PRODUCT_MODULE_NAME = VoiceInk;
-				PRODUCT_NAME = "VoiceInk Local";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "ENABLE_NATIVE_SPEECH_ANALYZER $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -723,7 +723,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk Local.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VoiceInk Local";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VoiceInk";
 			};
 			name = Release;
 		};
