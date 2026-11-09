@@ -93,8 +93,10 @@ local: check setup
 	if [ -d "$$APP_PATH" ]; then \
 		echo "Copying VoiceInk.app to ~/Downloads..."; \
 		$(call rm_retry,$$HOME/Downloads/VoiceInk.app); \
-		ditto "$$APP_PATH" "$$HOME/Downloads/VoiceInk.app"; \
+		if ! ditto "$$APP_PATH" "$$HOME/Downloads/VoiceInk.app"; then echo "Error: Could not copy VoiceInk.app to ~/Downloads; keeping $(LOCAL_DERIVED_DATA)"; exit 1; fi; \
 		xattr -cr "$$HOME/Downloads/VoiceInk.app"; \
+		$(call rm_retry,$(LOCAL_DERIVED_DATA)); \
+		echo "Removed build folder $(LOCAL_DERIVED_DATA)"; \
 		echo ""; \
 		echo "Build complete! App saved to: ~/Downloads/VoiceInk.app"; \
 		echo "Run with: open ~/Downloads/VoiceInk.app"; \
